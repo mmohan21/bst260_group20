@@ -1,0 +1,81 @@
+---
+title: "Linear Regression"
+author: "Cheryn Aouaj, Lisa Bebell, Sun Kim, Manasi Mohan"
+date: "12/13/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+```{r}
+library(readr)
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+library(caret)
+```
+
+We will first use linear regression to explore the association between water temperature and number of unique fish species. As we have water temperature data at two depths, 2m and 9m, we will fit two linear regression models. We will begin by splitting our data into a training (60%) and testing set (40%).
+
+```{r}
+# read data
+setwd("cleaned_data")
+temp <- read_csv("aims_temperatures.csv")
+fish <- read_csv("fish_species_counts.csv")
+fish_temp <- merge(x=temp, y=fish, by="date")
+
+# split into train and test
+set.seed(123)
+train_index <- createDataPartition(y=fish_temp$num_of_species, times=1, p = 0.6, list=FALSE)
+
+train_set <- fish_temp[train_index, ]
+test_set <- fish_temp[-train_index, ]
+```
+
+```{r}
+# fit lm for 2m depth
+fish_temp_2.0m <- lm(num_of_species ~ avg_water_temp_2.0m_flat_site, data=train_set)
+summary(fish_temp_2.0m)
+
+# fit lm for 9m depth
+fish_temp_9.0m <- lm(num_of_species ~ avg_water_temp_9.0m_slope_site, data=train_set)
+summary(fish_temp_9.0m)
+```
+
+We see that the models are very similar in results. The first model suggests that a 1-degree-Celsius increase in water temperature at 2m is associated with an average reduction of 2.5 fish species in a month. The second model suggests that a 1-degree-Celsius increase in water temperature at 9m is associated with an average reduction of 2.7 fish species in a month.
+
+Although we do not expect a major difference in the performance of these two models, we will compare the accuracy of each to assess whether water temperature at 2m or 9m is a better predictor of unique fish species observed in the Great Barrier Reef. 
+
+```{r}
+pred_2.0m <- predict(fish_temp_2.0m, test_set)
+pred_9.0m <- predict(fish_temp_9.0m, test_set)
+
+postResample(pred = pred_2.0m, obs = test_set$num_of_species)
+postResample(pred = pred_9.0m, obs = test_set$num_of_species)
+```
+
+As expected, results are very similar. The root mean-squared errors are almost identical, suggesting that 2m and 9m water temperatures predict number of species equally well. We can assess this visually to confirm our results.
+
+```{r}
+# water temp at 2.0m
+test_set %>%
+  ggplot(aes(avg_water_temp_2.0m_flat_site, num_of_species)) + 
+  geom_point() +
+  geom_abline(intercept=fish_temp_2.0m$coefficients[1], slope=fish_temp_2.0m$coefficients[2], col="red") +
+  xlab("Average water temp, 2m (Celsius)") +
+  ylab("Average number of species spotted") +
+  ggtitle("Water temperature (2m) vs. Number of fish species")
+
+# water temp at 9.0m
+test_set %>%
+  ggplot(aes(avg_water_temp_9.0m_slope_site, num_of_species)) + 
+  geom_point() +
+  geom_abline(intercept=fish_temp_9.0m$coefficients[1], slope=fish_temp_9.0m$coefficients[2], col="blue") +
+  xlab("Average water temp, 9m (Celsius)") +
+  ylab("Average number of species spotted") +
+  ggtitle("Water temperature (9m) vs. Number of fish species")
+```
+
+Not only do the distributions of points look very similar, but so do the slopes of the regression lines at the two depths. We can conclude that water temperature at 2m and 9m have the same predictive power for the number of fish species. As we see from the graphs, this is likely because the ranges of temperatures are very similar at the two depths.

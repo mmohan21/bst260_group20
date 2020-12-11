@@ -1,0 +1,82 @@
+---
+title: "Climate Change and the Great Barrier Reef"
+author: "Cheryn Aouaj, Lisa Bebell, Sun Kim, Manasi Mohan"
+date: "12/13/2020"
+output: html_document
+---
+
+## Overview and Motivation:
+
+Global warming threatens the health of our planet, and the health of human and non-human creatures alike. In order to combat the effects of global warming, we need to better understand the effects of temperature change on the natural environment, and how that affects our lives. Slowing global warming and reversing its damage has been challenging, in part because people don’t always see the connection between a warming planet and their own lives. To slow global warming and improve the health of our planet and its inhabitants, we think it is important for people to be able to see temperature change and link increasing temperatures to changes in the natural world that matter to them. 
+
+To make climate change more real, accessible, and interactive, we decided to examine the effects of temperature change on a part of the natural world that many people care about and have even visited - Australia’s [Great Barrier Reef](https://whc.unesco.org/en/list/154/), a UNESCO world heritage site. A [popular tourist destination](https://en.wikipedia.org/wiki/Tourism_on_the_Great_Barrier_Reef#:~:text=Tourism%20is%20one%20of%20the,and%20employs%20approximately%2069%2C000%20people) and favorite of [televised nature programs](https://www.imdb.com/title/tt5329344/) including [Sir David Attenborough’s Great Barrier Reef](https://attenboroughsreef.com/), this delicate environment is under threat from climate change and is a perfect setting to explore the damaging effects of climate change and help people understand why we should care enough about our world to halt global warming and reverse the devastation.
+
+From a scientific standpoint, it is important to understand the chain of events that leads to irreversible coral reef damage (loss of hard coral cover). This diagram illustrates the steps involved:
+
+![](flowchart.png)
+What starts as increased air pollution and loss of natural forest cover ends with what is known as a ‘permanent bleaching event’ and loss of coral cover - the death of a reef. What is a bleaching event? As explained by the [National Ocean Service](https://oceanservice.noaa.gov/facts/coral_bleach.html), this is when the hard corals that make up a reef become stressed, often by warm water temperatures. This stress causes the coral animals to purge their symbiotic microscopic algae called zooxanthellae (cool word, right?!) temporarily. Since the zooxanthellae are what give corals their color, this makes the corals white, or ‘bleached’. If the high temperatures or other source of stress continue long enough, the zooxanthellae are never able to return to their coral body homes, and the coral dies. This permanent bleaching event results in the death of part or all of the coral reef:
+
+<center>
+
+![(Image from [Science News for Students](https://www.sciencenewsforstudents.org/article/current-coral-bleaching-event-longest-known))](bleaching.png){width=70%}
+
+</center>
+
+More information on the effects of sea temperature on coral reef health can be found here, and a brief but comprehensive overview of the effect of climate change on the Great Barrier Reef can be found [here](https://www.nccarf.edu.au/sites/default/files/attached_files/GBR_PIB_WEB.pdf).
+
+**Our specific project goals were to:**  
+
+1. Explore relationships between sea water temperature and coral cover over time on the Great Barrier Reef.
+
+2. Explore relationships between sea water temperature change and 1) seagrass presence and diversity, and 2) fish species presence and diversity as indirect measures of coral reef health.  
+
+3. Develop a tool for users to visualize how 1) coral cover, 2) seagrass presence and diversity, and 3) fish species presence and diversity have changed over time in relation to both sea water and global temperature.  
+
+
+
+## Related Work
+
+Our team was inspired by team member Lisa’s prior marine biology research work as a Fulbright scholar to Australia as well as our commitment to the health of our planet and its human population. We also read several compelling manuscripts describing the association between rising air and sea temperatures and coral bleaching resulting in loss of hard coral cover, including [this one](https://pubmed.ncbi.nlm.nih.gov/29420869/) by Wolff and colleagues.
+
+<center>
+
+![](lisa.png){width=33%} 
+
+</center>
+
+## Initial Questions
+
+Our initial questions were:
+
+* What is the relationship between sea water temperature and percent hard coral cover on the Great Barrier Reef? Was there a time lag between change in temperature and change in coral cover?
+
+* Are there other indicators of coral reef health that track with hard coral cover? Do seagrass presence and diversity and fish species presence and diversity track with percentage of hard coral cover cover and/or sea temperature?
+
+* Is there a visually interesting way to convince people of the importance of mitigating global warming and keeping sea temperatures normal to preserve the Great Barrier Reef?
+
+## Data
+
+We used the [Google dataset search tool](https://datasetsearch.research.google.com/) to identify high-fidelity complete datasets that could be used to address our initial questions. We found several good datasets housed at the [Australian Institute of Marine Science (AIMS)](https://www.aims.gov.au/) and its linked subsidiaries, including:
+
+* Hard coral cover on the Great Barrier Reef (1986-2012) from the [Australian Government](https://data.gov.au/dataset/ds-dga-8d64cdee-45ae-4354-ad76-7c9188f9fcad/distribution/dist-dga-e06c5cc2-e490-4539-95c0-7a2a6e154c12/details?q=)
+* Sea water temperature log at Moore Reef (1997-2020) from [Australian Research Data Commons](https://researchdata.edu.au/sea-water-temperature-feb-2020/676245)
+* Seagrass surveys (1984-2018) from [eAtlas](https://eatlas.org.au/pydio/public/gbr-nesp-twq-3-2-1-5-4-jcu-seagrass-1984-2018-site-surveys)
+* Long-term visual fish census (1992-2015) from [AIMS](https://www.gbif.org/dataset/41f52fa4-f22f-4f46-8a8c-9864de450e0f)
+* Global temperature changes (1984-2019) from the [National Oceanographic and Atmospheric Administration (NOAA)](https://www.ncdc.noaa.gov/cag/global/time-series/globe/land_ocean/ytd/12/1997-2019)
+
+For those interested in climate change and coral reefs, AIMS has a rich collection of [downloadable datasets](https://www.aims.gov.au/docs/data/data.html).
+
+We explored each of these five datasets individually in RStudio and found that the data collection frequencies for different variables in each dataset varied from daily to weekly to monthly. Our wrangling steps included reformatting dates, adding summary features (sums, means, etc.), removing irrelevant rows, and merging the datasets by date. We kept cleaned versions of the individual datasets as well and used those for certain analyses. For the full wrangling code, please see the [Data Wrangling file](Data wrangling.html).
+
+## Analyses
+
+To address our questions of interest, we used four types of analyses:
+
+1. **Exploratory data analysis** to identify relationships between our variables of interest and inform our statistical analyses and model choices. Please see the [EDA file](EDA.html).
+
+2. **Linear regressions** to establish a baseline model for notable relationships found in EDA. Please see the [Linear regression file](Linear regression.html).
+
+3. **Random forest and multinomial logistic regression** to predict presence/absence of biodiversity based on a variety of ocean factors. Please see the [Machine learning file](Machine learning.html).
+
+4. **A RShiny app** that allows a user to interact with these data and visualize the relationships of interest over time. Please see the [RShiny file](shiny.html). 
+

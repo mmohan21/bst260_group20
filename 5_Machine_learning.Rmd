@@ -1,0 +1,198 @@
+---
+title: "Machine learning"
+author: "Cheryn Aouaj, Lisa Bebell, Sun Kim, Manasi Mohan"
+date: "12/13/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## 2.2 Classification of sea grass species in the Great Barrier Reef from 1999 - 2003
+Continuing on from sea life diversity, we have data on presence or absence of certain seagrass species in the Great Barrier Reef from 1999 to 2003. Let's try to build a classifier to determine how location, and types of sediment and seabed may predict presence of certain sea grass.
+
+As written in the data wrangling and cleaning RMarkdown/HTML file, we chose 4 species to classify: Cymodocea Serrulata, Syringodium Isoetifolium, Thalassia Hemprichii, and Zostera Muelleri (subspecies Capricorni).
+
+### 2.2.1 Exploratory data analysis and visualization
+```{r, warning=FALSE}
+seagrass <- read.csv("cleaned_data/seagrass_classification_data.csv", as.is =TRUE)
+
+seagrass$SPECIES <- as.factor(seagrass$SPECIES)
+seagrass$SEDIMENT <- as.factor(seagrass$SEDIMENT)
+seagrass$TIDAL <- as.factor(seagrass$TIDAL)
+
+head(seagrass)
+
+summary(seagrass)
+```
+
+First we plot sea grass according to location (latitude and longitude). Then we will add a third axis (depth) to visualize this in 3-dimensions using `plotly` package. Since depth is measured in meters below sea level, we visualize this in negative values.
+```{r}
+seagrass %>%  ggplot() + geom_point(aes(x=LATITUDE, y=LONGITUDE, color=SPECIES))
+
+plot_ly(seagrass, x=~LATITUDE, y=~LONGITUDE, z=~-DEPTH, color=~SPECIES, type="scatter3d", mode="markers")
+```
+
+We can also see how our categorical predictors relate to sea grass species.
+
+```{r}
+seagrass %>% 
+    ggplot(aes(SEDIMENT, fill=SPECIES)) + geom_bar(width=.5, position = "dodge")
+
+seagrass %>% 
+    ggplot(aes(TIDAL, fill=SPECIES)) + geom_bar(width=.5, position = "dodge")
+```
+
+
+
+### 2.2.2 Random forest
+We will first use random forest to build a classifier and then use a multinomial logistic regression model, and compare the two.
+
+Let's first partition our data set into train and test sets. Since we have a lot more data here than in the linear regression model, we will partition it by 75%-25%.
+
+```{r}
+# test-train split
+seagrass_train_ind <- createDataPartition(y = seagrass$SPECIES, p=0.75, list=FALSE)
+
+train_set <- seagrass[seagrass_train_ind, ]
+test_set <- seagrass[-seagrass_train_ind, ]
+```
+
+
+```{r}
+rf_fit <- randomForest(SPECIES ~ LATITUDE + LONGITUDE + DEPTH + SEDIMENT + TIDAL, 
+                       data=train_set,
+                       mtry = 2)
+rf_fit
+```
+
+
+```{r}
+rf_pred <- predict(rf_fit, newdata = test_set, type = "response")
+confusionMatrix(table(pred = rf_pred, true = test_set$SPECIES))
+```
+
+We see that our classification model works quite well, especially for T_HEMPRICH and Z_CAPRICOR, which have 85%+ sensitivity and specificity. However, we got quite a low sensitivity for S_ISOETIFO. Recall to our data wrangling portion that S_ISOETIFO had only about 100 "Yes" observations. Since we had a small sample size for S_ISOETIFO relative to the other 3 seagrass species, this may have contributed to the low sensitivity.
+
+We can visually assess our predicted values with true values of species to see how our model performed.
+```{r}
+# true values
+plot_ly(test_set, x=~LATITUDE, y=~LONGITUDE, z=~-DEPTH, color=~SPECIES, type="scatter3d", mode="markers")
+
+# predicted values
+plot_ly(test_set, x=~LATITUDE, y=~LONGITUDE, z=~-DEPTH, color=~rf_pred, type="scatter3d", mode="markers")
+```
+
+For sediment type:
+
+```{r}
+test_set %>% 
+    ggplot(aes(SEDIMENT, fill=SPECIES)) + geom_bar(width=.5, position = "dodge")
+
+test_set %>% 
+    ggplot(aes(SEDIMENT, fill=rf_pred)) + geom_bar(width=.5, position = "dodge")
+```
+
+
+For seabed type:
+```{r}
+test_set %>% 
+    ggplot(aes(TIDAL, fill=SPECIES)) + geom_bar(width=.5, position = "dodge")
+
+test_set %>% 
+    ggplot(aes(TIDAL, fill=rf_pred)) + geom_bar(width=.5, position = "dodge")
+```
+
+
+Let's examine variable importance.
+
+```{r}
+variable_importance <- importance(rf_fit)
+tmp <- data_frame(feature = rownames(variable_importance),
+                  Gini = variable_importance[,1]) %>%
+                  arrange(desc(Gini))
+
+tmp
+```
+
+We see that longitude and latitude were very predictive of presence of seagrass followed by depth from sea level. The types of sediment and seabed (intertidal or subtidal seabed) are not very good predictors. Thus, it seems that the location of where the sea grass was discovered matters more than the various ocean floor properties.
+
+
+```{r}
+tmp %>% ggplot(aes(x=reorder(feature, Gini), y=Gini)) + 
+  geom_bar(stat='identity') +
+  coord_flip() + xlab("Feature") +
+  theme(axis.text=element_text(size=8))
+```
+
+
+### 2.2.3 Multinomial logistic regression
+
+We can now try a multinomial logistic regression model to see how it compares to random forest. We will use the `nnet` package.
+
+The logistic regression model is as follows:
+```{r}
+multinom_fit <- multinom(SPECIES ~ LATITUDE + LONGITUDE + DEPTH + SEDIMENT, data=train_set)
+
+summary(multinom_fit)
+```
+
+Relative risk ratios where reference group is C_SERRULAT
+```{r}
+exp(coef(multinom_fit))
+```
+
+```{r}
+# predicted probabilities
+predicted_prob <- predict(multinom_fit, newdata=test_set, type="probs")
+
+# predicted classes
+predicted_class <- predict(multinom_fit, newdata=test_set, type="class")
+
+confusionMatrix(data = predicted_class, reference = test_set$SPECIES )
+```
+
+
+We see that our multinomial logistic model has about 91% overall accuracy, which performs a bit worse than random forest. However, the model performs very badly in predicting for `S_ISOETIFO`.
+
+The model seems to predict T_HEMPRICH the best with 88.7% sensitivity and 98.8% specificity. The model also does not perform well for sensitivity of C_SERRULAT, with only about 41.7% sensitivity.
+
+Again, we can assess our results visually:
+
+```{r}
+# true values
+plot_ly(test_set, x=~LATITUDE, y=~LONGITUDE, z=~-DEPTH, color=~SPECIES, type="scatter3d", mode="markers")
+
+# predicted values
+plot_ly(test_set, x=~LATITUDE, y=~LONGITUDE, z=~-DEPTH, color=~predicted_class, type="scatter3d", mode="markers")
+```
+
+
+For sediment type:
+
+```{r}
+test_set %>% 
+    ggplot(aes(SEDIMENT, fill=SPECIES)) + geom_bar(width=.5, position = "dodge")
+
+test_set %>% 
+    ggplot(aes(SEDIMENT, fill=predicted_class)) + geom_bar(width=.5, position = "dodge")
+```
+
+
+For seabed type:
+```{r}
+test_set %>% 
+    ggplot(aes(TIDAL, fill=SPECIES)) + geom_bar(width=.5, position = "dodge")
+
+test_set %>% 
+    ggplot(aes(TIDAL, fill=predicted_class)) + geom_bar(width=.5, position = "dodge")
+```
+
+
+We can confirm in our visualizations that the logistic regression model failed to predict for `S_ISOETIFO`.
+
+
+So, we see that the overall accuracy for multinomial logistic regression model vs random forest model was 95.6% and 90.9%, respectively. However, the overall accuracy stated for the logistic regression model is deceiving since it did not perform well in sensitivity in 2 out of 4 classes.
+
+

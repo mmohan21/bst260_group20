@@ -1,0 +1,209 @@
+---
+title: "EDA"
+author: "Cheryn Aouaj, Lisa Bebell, Sun Kim, Manasi Mohan"
+date: "12/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE, results = 'hold')
+```
+
+```{r, message=FALSE, warning=FALSE}
+library(readr)
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+
+setwd("cleaned_data")
+monthly_data <- read_csv("data_monthly_MM.csv")
+```
+
+### Time Trends
+We first aimed to visualize trends in sea water temperature, hard coral cover, seagrass species, and fish species in the Great Barrier Reef from 1997 to 2011.
+
+##### Sea water temperature trends over time
+```{r, message=FALSE, warning=FALSE}
+monthly_data %>%
+  ggplot(aes(x=monthyear, y=water_temp)) +
+  geom_line() +
+  scale_x_date(breaks = seq.Date(as.Date('1997-01-01'), as.Date('2011-01-01'), "1 year"), 
+               labels = c('1997', '1998', '1999', '2000', '2001', '2002', '2003', '2004', 
+                          '2005', '2006', '2007', '2008', '2009', '2010', '2011'),
+               limits = c(as.Date('1997-01-01'), as.Date('2011-01-01'))) +
+  ggtitle("Average monthly water temperature, Moore Reef") +
+  xlab("Month-Year") +
+  ylab("Avg. temp (Celsius)") +
+  ylim(c(23,30))
+
+monthly_data %>%
+  ggplot(aes(x=monthyear)) +
+  geom_point(aes(y=seasonal_water_temp, group=Season, color=Season)) +
+  geom_line(aes(y=annual_water_temp)) +
+  scale_x_date(breaks = seq.Date(as.Date('1997-01-01'), as.Date('2011-01-01'), "1 year"), 
+               labels = c('1997', '1998', '1999', '2000', '2001', '2002', '2003', '2004', 
+                          '2005', '2006', '2007', '2008', '2009', '2010', '2011'),
+               limits = c(as.Date('1997-01-01'), as.Date('2011-01-01'))) +
+  ggtitle("Average seasonal water temperature, Moore Reef") +
+  xlab("Month-Year") +
+  ylab("Avg. temp (Celsius)") +
+  ylim(c(23,30))
+```
+
+In the first graph we see that the average monthly water temperature fluctuates over the course of the year, which makes sense as the Great Barrier Reef region of Australia experiences two major seasons; the wet/hot season runs from April through September, and the dry/cool season runs from October through March. If we stratify the average monthly temperature values by season as in the second graph, we can more clearly see a trend in water temperature from year to year. Overlaying the annual average temperature in black, we see a slight upward trend in water temperature from 1997 to 2011.
+
+
+##### Hard coral cover trends over time
+```{r, message=FALSE, warning=FALSE}
+monthly_data %>%
+  ggplot(aes(x=monthyear, y=percent_coral_cover)) +
+  geom_line() +
+  scale_x_date(breaks = seq.Date(as.Date('1997-01-01'), as.Date('2011-01-01'), "1 year"), 
+               labels = c('1997', '1998', '1999', '2000', '2001', '2002', '2003', '2004', 
+                          '2005', '2006', '2007', '2008', '2009', '2010', '2011'),
+               limits = c(as.Date('1997-01-01'), as.Date('2011-01-01'))) +
+  ggtitle("Hard coral cover, Great Barrier Reef") +
+  xlab("Month-Year") +
+  ylab("Percent coverage") +
+  scale_y_continuous(breaks = seq(13, 25, 2),
+                     labels = seq(13, 25, 2),
+                     limits = c(13, 25))
+```
+
+This graph shows a clear downward trend in the average monthly hard coral coverage over this time period. Coral coverage does not appear to fluctuate seasonally, but rather continues to decrease at a steady slope from about 24% in 1997 to about 14% in 2011.
+
+
+##### Seagrass trends over time
+```{r, message=FALSE, warning=FALSE}
+monthly_data %>%
+  ggplot(aes(x=monthyear)) +
+  geom_point(aes(y=num_seagrass)) +
+  geom_line(aes(y=num_seagrass)) +
+  scale_x_date(breaks = seq.Date(as.Date('1997-01-01'), as.Date('2011-01-01'), "1 year"), 
+               labels = c('1997', '1998', '1999', '2000', '2001', '2002', '2003', '2004', 
+                          '2005', '2006', '2007', '2008', '2009', '2010', '2011'),
+               limits = c(as.Date('1997-01-01'), as.Date('2011-01-01'))) +
+  ggtitle("Average monthly seagrass species, Great Barrier Reef") +
+  xlab("Month-Year") +
+  ylab("Avg. number of species spotted") +
+  ylim(c(0,2))
+```
+
+The average number of unique seagrass species recorded per month ranges from 0 to 2. It appears that over this period, the diversity of seagrass may be decreasing in the Great Barrier Reef. There also appears to be some seasonality in the seagrass life cycle; this adds some noise to the graph that makes it harder to interpret.
+
+
+##### Fish census trends over time
+```{r, message=FALSE, warning=FALSE}
+monthly_data %>%
+  ggplot(aes(x=monthyear)) +
+  geom_line(aes(y=num_fish)) +
+  geom_point(aes(y=num_fish)) +
+  scale_x_date(breaks = seq.Date(as.Date('1997-01-01'), as.Date('2011-01-01'), "1 year"), 
+               labels = c('1997', '1998', '1999', '2000', '2001', '2002', '2003', '2004', 
+                          '2005', '2006', '2007', '2008', '2009', '2010', '2011'),
+               limits = c(as.Date('1997-01-01'), as.Date('2011-01-01'))) +
+  ggtitle("Average monthly fish species, Great Barrier Reef") +
+  xlab("Month-Year") +
+  ylab("Avg. number of species spotted")
+```
+
+The average number of unique fish species spotted per month consistently falls between 50 and 75, with some outliers. As with the seagrass, there appears to be a seasonal component to fish sightings that likely relates to their breeding seasons. Over this period, the diversity of fish in the Great Barrier Reef increased slightly in the late 1990s, then stabilized around 2002.
+
+
+### Correlations
+Next, we aimed to identify relationships between our variables, to inform what statistical analyses might be interesting. We started by examining the relationship between water temperature and hard coral cover, as we hypothesized that increasing temperatures would be associated with declines in coral cover. 
+
+```{r, message=FALSE, warning=FALSE}
+monthly_data %>%
+  ggplot(aes(x=water_temp, y=percent_coral_cover)) +
+  geom_point() +
+  xlab("Average monthly water temp (Celsius)") +
+  ylab("Percent coverage") +
+  ggtitle("Water temperature vs. Hard coral cover") +
+  scale_y_continuous(breaks = seq(13, 25, 2),
+                     labels = seq(13, 25, 2),
+                     limits = c(13, 25))
+```
+
+There appears to be no correlation between water temperature and coral cover; the scatter plot may as well be a collection of random points. However, we suspect that there may be a lag in the relationship between these two variables. We will check whether water temperature affects coral cover 5 years into the future, as well as 10 years into the future.
+
+```{r, message=FALSE, warning=FALSE}
+# create lag variables
+library(Hmisc)
+monthly_data$temp_lag5 <- Lag(monthly_data$water_temp, +60)
+monthly_data$temp_lag10 <- Lag(monthly_data$water_temp, +120)
+
+monthly_data %>%
+  ggplot(aes(x=temp_lag5, y=percent_coral_cover)) +
+  geom_point() +
+  xlab("5-year lagged water temp (Celsius)") +
+  ylab("Percent coverage") +
+  ggtitle("Water temperature (5-year lag) vs. Hard coral cover") +
+  scale_y_continuous(breaks = seq(13, 25, 2),
+                     labels = seq(13, 25, 2),
+                     limits = c(13, 25))
+
+monthly_data %>%
+  ggplot(aes(x=temp_lag10, y=percent_coral_cover)) +
+  geom_point() +
+  xlab("10-year lagged water temp (Celsius)") +
+  ylab("Percent coverage") +
+  ggtitle("Water temperature (10-year lag) vs. Hard coral cover") +
+  scale_y_continuous(breaks = seq(13, 25, 2),
+                     labels = seq(13, 25, 2),
+                     limits = c(13, 25))
+```
+
+Even at these two lag points, there does not appear to be any correlation between water temperature and hard coral cover in our data. We will next assess whether our biodiversity variables, seagrass and fish, might be better indicators of reef health.
+
+```{r, message=FALSE, warning=FALSE}
+monthly_data %>%
+  ggplot(aes(x=num_fish, y=percent_coral_cover)) +
+  geom_point() +
+  xlab("Average number of fish species") +
+  ylab("Percent coverage") +
+  ggtitle("Fish species vs. Hard coral cover") +
+  scale_y_continuous(breaks = seq(13, 25, 2),
+                     labels = seq(13, 25, 2),
+                     limits = c(13, 25))
+
+monthly_data %>%
+  ggplot(aes(x=num_seagrass, y=percent_coral_cover)) +
+  geom_point() +
+  xlab("Average number of seagrass species") +
+  ylab("Percent coverage") +
+  ggtitle("Seagrass species vs. Hard coral cover") +
+  scale_y_continuous(breaks = seq(13, 25, 2),
+                     labels = seq(13, 25, 2),
+                     limits = c(13, 25))
+
+monthly_data %>%
+  ggplot(aes(y=num_seagrass, x=percent_coral_cover)) +
+  geom_point() +
+  ylab("Average number of seagrass species") +
+  xlab("Percent coverage") +
+  ggtitle("Seagrass species vs. Hard coral cover") +
+  scale_x_continuous(breaks = seq(13, 25, 2),
+                     labels = seq(13, 25, 2),
+                     limits = c(13, 25))
+```
+
+It appears that while fish species are not really correlated with coral cover, seagrass species might be. If we re-graph these two biodiversity variables with the axes flipped, framing coral cover as a predictor of biodiversity, it becomes more clear that coral cover and seagrass species are positively correlated (third graph). Thus, we will choose statistical analyses that utilize seagrass as a predictor of reef health. First, we will check to see whether these biodiversity variables are associated with water temperature.
+
+```{r, message=FALSE, warning=FALSE}
+monthly_data %>%
+  ggplot(aes(x=water_temp, y=num_seagrass)) +
+  geom_point() +
+  xlab("Average monthly water temp (Celsius)") +
+  ylab("Average number of seagrass species") +
+  ggtitle("Water temperature vs. Seagrass species")
+
+monthly_data %>%
+  ggplot(aes(x=water_temp, y=num_fish)) +
+  geom_point() +
+  xlab("Average monthly water temp (Celsius)") +
+  ylab("Average number of fish species") +
+  ggtitle("Water temperature vs. Fish species")
+```
+
+There appears to be a clear negative correlation between water temperature and number of unique fish species, and we will investigate this further.
