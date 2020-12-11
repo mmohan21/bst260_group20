@@ -66,17 +66,22 @@ We used the [Google dataset search tool](https://datasetsearch.research.google.c
 
 For those interested in climate change and coral reefs, AIMS has a rich collection of [downloadable datasets](https://www.aims.gov.au/docs/data/data.html).
 
-We explored each of these five datasets individually in RStudio and found that the data collection frequencies for different variables in each dataset varied from daily to weekly to monthly. Our wrangling steps included reformatting dates, adding summary features (sums, means, etc.), removing irrelevant rows, and merging the datasets by date. We kept cleaned versions of the individual datasets as well and used those for certain analyses. For the full wrangling code, please see the [Data Wrangling file](Data wrangling.html).
+We explored each of these five datasets individually in RStudio and found that the data collection frequencies for different variables in each dataset varied from daily to weekly to monthly. Our wrangling steps included reformatting dates, adding summary features (sums, means, etc.), removing irrelevant rows, and merging the datasets by date. We kept cleaned versions of the individual datasets as well and used those for certain analyses. For the full wrangling code, please see the [Data Wrangling file](2_Data_wrangling.html).
 
 ## Analyses
 
 To address our questions of interest, we used four types of analyses:
 
-1. **Exploratory data analysis** to identify relationships between our variables of interest and inform our statistical analyses and model choices. Please see the [EDA file](EDA.html).
+1. **Exploratory data analysis** to identify relationships between our variables of interest and inform our statistical analyses and model choices. Please see the [EDA file](3_EDA.html).
 
-2. **Linear regressions** to establish a baseline model for notable relationships found in EDA. Please see the [Linear regression file](Linear regression.html).
+2. **Linear regressions** to establish a baseline model for notable relationships found in EDA. Please see the [Linear regression file](4_Linear_regression.html).
 
-3. **Random forest and multinomial logistic regression** to predict presence/absence of biodiversity based on a variety of ocean factors. Please see the [Machine learning file](Machine learning.html).
+3. **Random forest and multinomial logistic regression** to predict presence/absence of biodiversity based on a variety of ocean factors. Please see the [Machine learning file](5_Machine_learning.html).
 
-4. **A RShiny app** that allows a user to interact with these data and visualize the relationships of interest over time. Please see the [RShiny file](shiny.html). 
+4. **A RShiny app** that allows a user to interact with these data and visualize the relationships of interest over time. Please see the [RShiny file](6_Shiny_app.Rmd). 
+
+
+## Conclusions
+
+1. **EDA**
 
