@@ -438,13 +438,10 @@ moore_reef_water_temp_2.0m &lt;- read.csv(&quot;AIMS_MooreReef_WaterTemperature_
 moore_reef_water_temp_9.0m &lt;- read.csv(&quot;AIMS_MooreReef_WaterTemperature_22Oct1997to17Dec2017_9.0m.csv&quot;, skip=94, sep= &quot;,&quot;, row.names = NULL)
 
 # run through function defined above to clean and wrangle data
-moore_reef_water_temp_2.0m &lt;- clean_MooreReef_data(moore_reef_water_temp_2.0m)</code></pre>
-<pre><code>## Warning in `[&lt;-.data.frame`(`*tmp*`, , 2:ncol(df), value = structure(list(:
-## provided 6 variables to replace 5 variables</code></pre>
-<pre class="r"><code>moore_reef_water_temp_9.0m &lt;- clean_MooreReef_data(moore_reef_water_temp_9.0m)</code></pre>
-<pre><code>## Warning in `[&lt;-.data.frame`(`*tmp*`, , 2:ncol(df), value = structure(list(:
-## provided 6 variables to replace 5 variables</code></pre>
-<pre class="r"><code>moore_reef_water_temp_2.0m &lt;- moore_reef_water_temp_2.0m %&gt;%
+moore_reef_water_temp_2.0m &lt;- clean_MooreReef_data(moore_reef_water_temp_2.0m)
+moore_reef_water_temp_9.0m &lt;- clean_MooreReef_data(moore_reef_water_temp_9.0m)
+
+moore_reef_water_temp_2.0m &lt;- moore_reef_water_temp_2.0m %&gt;%
     filter(Water.Temperature..2.0m.MORFL1.Reef.Flat.Site.1_LEVEL2_value_AVG != &quot;Not available&quot;)
 
 moore_reef_water_temp_9.0m &lt;- moore_reef_water_temp_9.0m %&gt;%
@@ -506,9 +503,9 @@ fish_census$dateIdentified &lt;- ymd_hms(fish_census$dateIdentified)
 fish_species_counts &lt;- fish_census %&gt;%
     arrange(dateIdentified) %&gt;%
     group_by(dateIdentified) %&gt;%
-    summarise(num_of_species=n_distinct(species))</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<pre class="r"><code># rename &quot;dateIdentified&quot; to &quot;date&quot;
+    summarise(num_of_species=n_distinct(species))
+
+# rename &quot;dateIdentified&quot; to &quot;date&quot;
 names(fish_species_counts)[names(fish_species_counts) == &quot;dateIdentified&quot;] &lt;- &quot;date&quot;
 
 # reformat date
@@ -607,7 +604,7 @@ table(seagrass_data$num_species_present)</code></pre>
 ## 12381   411     3</code></pre>
 <pre class="r"><code>nrow(seagrass_data)</code></pre>
 <pre><code>## [1] 12795</code></pre>
-<p>We see that only 3.2% of total survey sites recorded more than 1 species observed. For ease of building a classification model, we will remove these rows. We do not want a situation where our model “can’t decide” in classifying our observations. Because we removed only about 3% of over 12,500 observations, we still preserve statistical power.</p>
+<p>We see that only 3.2% (414/12795) of total survey sites recorded more than 1 species observed. For ease of building a classification model, we will remove these rows. We do not want a situation where our model “can’t decide” in classifying our observations. Because we removed only about 3% of over 12,500 observations, we still preserve statistical power.</p>
 <pre class="r"><code>seagrass_data &lt;- seagrass_data %&gt;% filter(num_species_present &lt; 2)
 
 table(seagrass_data$C_SERRULAT)</code></pre>
@@ -768,7 +765,9 @@ fish_agg &lt;- aggregate(num_fish ~ year + month, data = fish, FUN = mean)
 
 # add monthyear column
 fish_agg$monthyear &lt;- my(paste(fish_agg$month, fish_agg$year, sep = &quot; &quot;))</code></pre>
-<p>##3## Seagrass surveys</p>
+</div>
+<div id="seagrass-surveys-1" class="section level5">
+<h5>Seagrass surveys</h5>
 <pre class="r"><code>setwd(&quot;raw_data&quot;)
 seagrass &lt;- read_csv(&quot;GBR_NESP-TWQ-3.2.1-5.4_JCU_Seagrass_1984-2018_Site-surveys.csv&quot;)
 

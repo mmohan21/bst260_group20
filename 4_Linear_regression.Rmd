@@ -17,7 +17,7 @@ library(ggplot2)
 library(caret)
 ```
 
-We will first use linear regression to explore the association between water temperature and number of unique fish species. As we have water temperature data at two depths, 2m and 9m, we will fit two linear regression models. We will begin by splitting our data into a training (60%) and testing set (40%).
+We will first use linear regression (ordinary least squares) to explore the association between water temperature and number of unique fish species. As we have water temperature data at two depths, 2m and 9m, we will fit two linear regression models. We will begin by splitting our data into a training (60%) and testing set (40%).
 
 ```{r}
 # read data
@@ -79,3 +79,7 @@ test_set %>%
 ```
 
 Not only do the distributions of points look very similar, but so do the slopes of the regression lines at the two depths. We can conclude that water temperature at 2m and 9m have the same predictive power for the number of fish species. As we see from the graphs, this is likely because the ranges of temperatures are very similar at the two depths.
+
+### Conclusions
+
+We found that increased water temperature was associated with a decrease in the number of unique fish species recorded in the Great Barrier Reef from 1997 to 2011. The effect of temperature was similar at different depths of 2.0m and 9.0m. Although these models do not adjust for potential confounders, they suggest an inverse linear relationship between water temperature and fish species diversity. This finding supports the negative effects of global warming on coral reef animal diversity, with the caveat that fish species diversity could have changed over time due to many other changes occurring during the same time period, including water pollution, commercial and private fishing activity, and other environmental effects not accounted for in our simplified models.

@@ -20,7 +20,7 @@ library(randomForest)
 library(nnet)
 ```
 
-### Some more EDA - Seagrass species in the Great Barrier Reef, 1984-2018
+### First, some more EDA - Seagrass species in the Great Barrier Reef, 1984-2018
 
 We will now focus our attention on seagrass, and aim to build a classification algorithm to predict presence or absence of any seagrass species in the Great Barrier Reef. We will use location, types of sediment, and types of seabed to predict the presence of four seagrass species: *Cymodocea serrulata*, *Syringodium isoetifolium*, *Thalassia hemprichii*, and *Zostera muelleri* (subspecies *capricorni*).
 
@@ -50,7 +50,7 @@ seagrass %>%
 plot_ly(seagrass, x=~LATITUDE, y=~LONGITUDE, z=~-DEPTH, color=~SPECIES, type="scatter3d", mode="markers")
 ```
 
-We can also see how our categorical predictors, sediment and seabed type, relate to the number of observed seagrass species:
+We can also use histograms to see how our categorical predictors, sediment and seabed type, relate to the number of observed seagrass species:
 
 ```{r}
 seagrass %>% 
@@ -64,7 +64,7 @@ seagrass %>%
 
 ### Random Forest
 
-Our first attempt at the classifier (to predict presence of any seagrass species) will use random forest. We will first partition the data set into a training and testing set. Since we have over 12,000 observations, we can allocate 75% of the data to the training set.
+Our first attempt at the classifier (to predict presence of any seagrass species) will use random forest. We will first partition the data set into a training and testing set. Since we have over 12,000 observations, we can allocate 75% of the data to the training set. We will fit the model using 500 trees and 2 variables to split at each node (~p/4).
 
 ```{r}
 # train-test split
@@ -84,7 +84,7 @@ rf_pred <- predict(rf_fit, newdata = test_set, type = "response")
 confusionMatrix(table(pred = rf_pred, true = test_set$SPECIES))
 ```
 
-We see that our classification model works quite well, especially for `T_HEMPRICH` and `Z_CAPRICOR`, which have 85%+ sensitivity and specificity. However, this model got quite a low sensitivity for `S_ISOETIFO`. Recall from our data wrangling process that `S_ISOETIFO` had only about 100 "Yes" observations. Since we thus had low variation in the values of `S_ISOETIFO` relative to the other three seagrass species, this may have contributed to the low sensitivity. 
+We see that our classification model works quite well, especially for `T_HEMPRICH` and `Z_CAPRICOR`, which have 85%+ sensitivity and specificity. However, this model got quite a low sensitivity for `S_ISOETIFO`. Recall from our data wrangling process that `S_ISOETIFO` had only about 100 "Yes" observations. Since we had such low variation in the values of `S_ISOETIFO` relative to the other three seagrass species, this may have contributed to the low sensitivity. 
 
 We can visually assess our predicted values with true values of species to see how our model performed.
 
@@ -133,7 +133,7 @@ tmp %>% ggplot(aes(x=reorder(feature, Gini), y=Gini)) +
   theme(axis.text=element_text(size=8))
 ```
 
-We see that longitude and latitude were very predictive of presence of seagrass followed by water depth. The types of sediment and seabed are not very important predictors. Thus, it seems that the location of where the sea grass was discovered matters more than the various ocean floor properties.
+We see that longitude and latitude were very predictive of presence of seagrass, followed by water depth. The types of sediment and seabed are not very important predictors. Thus, it seems that the location of where the sea grass was discovered matters more than the various ocean floor properties.
 
 
 ### Multinomial logistic regression
@@ -155,7 +155,7 @@ predicted_class <- predict(multinom_fit, newdata=test_set, type="class")
 confusionMatrix(data = predicted_class, reference = test_set$SPECIES )
 ```
 
-We see that our multinomial logistic model has about 91% overall accuracy, which is worse performance than the random forest. The model seems to predict `T_HEMPRICH` the best with 88.7% sensitivity and 98.8% specificity. It peforms well for `Z_CAPRICOR` as well, but performs relatively poorly for `C_SERRULAT` and even worse for `S_ISOETIFO` with 0% sensitivity. Again, we can assess our results visually:
+We see that our multinomial logistic model has about 91% overall accuracy, which indicates lower performance than the random forest. The model seems to predict `T_HEMPRICH` the best with 88.7% sensitivity and 98.8% specificity. It peforms well for `Z_CAPRICOR` as well, but performs relatively poorly for `C_SERRULAT` and even worse for `S_ISOETIFO` with 0% sensitivity. Again, we can assess our results visually:
 
 ```{r}
 # true values
@@ -192,3 +192,9 @@ test_set %>%
 
 The overall accuracy for the multinomial logistic regression model was 90.9%, and that of the random forest model was 95.6%. While these may seem fairly close, the accuracy for the multinomial logistic model is deceiving since it performed particularly poorly in terms of sensitivity in 2 out of 4 classes.
 
+
+### Conclusions
+
+With approximately 96% overall accuracy, the random forest model performed better than the multinomial logistic regression model (with 91% accuracy) in predicting the species of a seagrass observation based on several environmental inputs. The best predictors of seagrass presence were latitude, longitude, and depth below sea level. Prediction of seagrass species was more closely related geographic location (latitude and longitude) than sediment type or tidal zone. However, despite the high overall accuracy of both models, insufficient observations of *S. isoetifolium* presence led to low performance of both models for predicting the presence of this seagrass species.
+
+Knowledge gained from this model could be helpful to better understand which seagrass species are present in specific locations over time, which may be an important indicator of reef health. Seagrass ecology is a marker of plant diversity and presence or absence of specific species may change with environmental changes in the reef over time such as climate change. Over time, sea water temperature could lead to changes in seagrass ecology by altering tidal zones and sediment type, two predictors in our models. Even the information represented by geographic location could change over time, if the location variable reflects the combined effects air and water temperature, water quality, and ocean and air currents.

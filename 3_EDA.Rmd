@@ -89,7 +89,7 @@ monthly_data %>%
   ylim(c(0,2))
 ```
 
-The average number of unique seagrass species recorded per month ranges from 0 to 2. It appears that over this period, the diversity of seagrass may be decreasing in the Great Barrier Reef. There also appears to be some seasonality in the seagrass life cycle; this adds some noise to the graph that makes it harder to interpret.
+The average number of unique seagrass species recorded per month ranges from 0 to 2. It appears that over this period, the diversity of seagrass may be decreasing in the Great Barrier Reef. There also appears to be some seasonality in the seagrass life cycle; this adds some noise to the graph that makes it harder to interpret trends.
 
 
 ##### Fish census trends over time
@@ -111,7 +111,7 @@ The average number of unique fish species spotted per month consistently falls b
 
 
 ### Correlations
-Next, we aimed to identify relationships between our variables, to inform what statistical analyses might be interesting. We started by examining the relationship between water temperature and hard coral cover, as we hypothesized that increasing temperatures would be associated with declines in coral cover. 
+Next, we aimed to identify relationships between our variables to inform which statistical analyses might be interesting. We started by examining the relationship between water temperature and hard coral cover, as we hypothesized that increasing temperatures would be associated with declines in coral cover. 
 
 ```{r, message=FALSE, warning=FALSE}
 monthly_data %>%
@@ -207,3 +207,8 @@ monthly_data %>%
 ```
 
 There appears to be a clear negative correlation between water temperature and number of unique fish species, and we will investigate this further.
+
+### Conclusions
+
+Our EDA helped us visualize our datasets and determine the best predictors to use in machine learning prediction models and RShiny App visualizations. Based on our EDA, we decided to create [linear regression models](4_Linear_regression.html) of the effect of temperature on the number of unique fish species discovered. EDA also led us to build a [classifier](5_Machine_learning.html) to predict seagrass species presence at specific survey sites on the Great Barrier Reef based on location, sediment type, and whether the seabed was located in a tidal or intertidal zone. Finally, based on our EDA, we decided that a [RShiny app](6_Shiny_app.Rmd) illustrating the changes in average water temperature and percentage of hard coral cover over time would be the most illustrative of the possible link between global warming and coral reef health.
+

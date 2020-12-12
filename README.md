@@ -2,12 +2,12 @@
 Final project by Cheryn Aouaj, Lisa Bebell, Sun Kim, Manasi Mohan
 
 Please refer to files in their numbered order:
-1_Project_overview.html
-2_Data_wrangling.html
-3_EDA.html
-4_Linear_regression.html
-5_Machine_learning.html
-6_Shiny_app.Rmd
+- 1_Project_overview.html
+- 2_Data_wrangling.html
+- 3_EDA.html
+- 4_Linear_regression.html
+- 5_Machine_learning.html
+- 6_Shiny_app.Rmd
 
 File #1 contains the introduction and background to our project, and links to each of the other files listed above. It also contains our final conclusions at the bottom.
 

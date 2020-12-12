@@ -5,9 +5,13 @@ date: "12/13/2020"
 output: html_document
 ---
 
-## Overview and Motivation:
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
 
-Global warming threatens the health of our planet, and the health of human and non-human creatures alike. In order to combat the effects of global warming, we need to better understand the effects of temperature change on the natural environment, and how that affects our lives. Slowing global warming and reversing its damage has been challenging, in part because people don’t always see the connection between a warming planet and their own lives. To slow global warming and improve the health of our planet and its inhabitants, we think it is important for people to be able to see temperature change and link increasing temperatures to changes in the natural world that matter to them. 
+### Overview and Motivation:
+
+Global warming threatens the health of our planet, and the health of human and non-human creatures alike. In order to combat the effects of global warming, we need to better understand the effects of temperature change on the natural environment, and how that affects our lives. Slowing global warming and reversing its damage has been challenging, in part because people don’t always see the connection between a warming planet and their own lives. We think it is important for people to be able to see temperature change and link increasing temperatures to changes in the natural world that matter to them, in order to slow global warming and improve the health of our planet and its inhabitants.  
 
 To make climate change more real, accessible, and interactive, we decided to examine the effects of temperature change on a part of the natural world that many people care about and have even visited - Australia’s [Great Barrier Reef](https://whc.unesco.org/en/list/154/), a UNESCO world heritage site. A [popular tourist destination](https://en.wikipedia.org/wiki/Tourism_on_the_Great_Barrier_Reef#:~:text=Tourism%20is%20one%20of%20the,and%20employs%20approximately%2069%2C000%20people) and favorite of [televised nature programs](https://www.imdb.com/title/tt5329344/) including [Sir David Attenborough’s Great Barrier Reef](https://attenboroughsreef.com/), this delicate environment is under threat from climate change and is a perfect setting to explore the damaging effects of climate change and help people understand why we should care enough about our world to halt global warming and reverse the devastation.
 
@@ -26,17 +30,19 @@ More information on the effects of sea temperature on coral reef health can be f
 
 **Our specific project goals were to:**  
 
-1. Explore relationships between sea water temperature and coral cover over time on the Great Barrier Reef.
+1. Visualize trends in sea water temperature, hard coral cover, seagrass species, and fish species over time.
 
-2. Explore relationships between sea water temperature change and 1) seagrass presence and diversity, and 2) fish species presence and diversity as indirect measures of coral reef health.  
+2. Explore relationships between sea water temperature and coral cover over time on the Great Barrier Reef, with the hypothesis that increasing temperature is associated with a decline in coral cover.
 
-3. Develop a tool for users to visualize how 1) coral cover, 2) seagrass presence and diversity, and 3) fish species presence and diversity have changed over time in relation to both sea water and global temperature.  
+3. Explore relationships between sea water temperature change and 1) seagrass presence and diversity, and 2) fish species presence and diversity as indirect measures of coral reef health.  
+
+4. Develop a tool for users to visualize how changes in average water temperature are linked with changes in hard coral cover over time. 
 
 
 
-## Related Work
+### Related Work
 
-Our team was inspired by team member Lisa’s prior marine biology research work as a Fulbright scholar to Australia as well as our commitment to the health of our planet and its human population. We also read several compelling manuscripts describing the association between rising air and sea temperatures and coral bleaching resulting in loss of hard coral cover, including [this one](https://pubmed.ncbi.nlm.nih.gov/29420869/) by Wolff and colleagues.
+Our team was inspired by team member Lisa’s prior marine biology research work as a Fulbright scholar to Australia, as well as our commitment to the health of our planet and its human population. We also read several compelling manuscripts describing the association between rising air and sea temperatures and coral bleaching resulting in loss of hard coral cover, including [this one](https://pubmed.ncbi.nlm.nih.gov/29420869/) by Wolff and colleagues.
 
 <center>
 
@@ -44,7 +50,7 @@ Our team was inspired by team member Lisa’s prior marine biology research work
 
 </center>
 
-## Initial Questions
+### Initial Questions
 
 Our initial questions were:
 
@@ -54,7 +60,7 @@ Our initial questions were:
 
 * Is there a visually interesting way to convince people of the importance of mitigating global warming and keeping sea temperatures normal to preserve the Great Barrier Reef?
 
-## Data
+### Data
 
 We used the [Google dataset search tool](https://datasetsearch.research.google.com/) to identify high-fidelity complete datasets that could be used to address our initial questions. We found several good datasets housed at the [Australian Institute of Marine Science (AIMS)](https://www.aims.gov.au/) and its linked subsidiaries, including:
 
@@ -68,7 +74,7 @@ For those interested in climate change and coral reefs, AIMS has a rich collecti
 
 We explored each of these five datasets individually in RStudio and found that the data collection frequencies for different variables in each dataset varied from daily to weekly to monthly. Our wrangling steps included reformatting dates, adding summary features (sums, means, etc.), removing irrelevant rows, and merging the datasets by date. We kept cleaned versions of the individual datasets as well and used those for certain analyses. For the full wrangling code, please see the [Data Wrangling file](2_Data_wrangling.html).
 
-## Analyses
+### Analyses
 
 To address our questions of interest, we used four types of analyses:
 
@@ -76,12 +82,26 @@ To address our questions of interest, we used four types of analyses:
 
 2. **Linear regressions** to establish a baseline model for notable relationships found in EDA. Please see the [Linear regression file](4_Linear_regression.html).
 
-3. **Random forest and multinomial logistic regression** to predict presence/absence of biodiversity based on a variety of ocean factors. Please see the [Machine learning file](5_Machine_learning.html).
+3. **Random forest and multinomial logistic regression** to predict presence/absence of as well as classify biodiversity based on a variety of ocean factors. Please see the [Machine learning file](5_Machine_learning.html).
 
 4. **A RShiny app** that allows a user to interact with these data and visualize the relationships of interest over time. Please see the [RShiny file](6_Shiny_app.Rmd). 
 
 
-## Conclusions
+### Summary of Findings
 
-1. **EDA**
+Based on linear regression models, our data demonstrate that increased water temperature (at 2m and 9m depth) was associated with a decrease in the number of unique fish species recorded in the Great Barrier Reef from 1997 to 2011.
+
+We were also able to create classification models that predicted whether an observation of seagrass was one of four important indicator species whose presence in specific locations reflect overall reef health. With approximately 96% overall accuracy, our random forest model performed well, predicting the species of an observation of seagrass based on environmental factors including latitude, longitude, and depth below sea level. Prediction of seagrass species was more closely related geographic location (latitude and longitude) than sediment type or tidal zone. Since seagrass ecology is a marker of plant diversity and presence or absence of specific species may change with environmental changes in the reef over time, our model predicting which seagrass species are present in specific locations over time and may be an important indicator of reef health.
+
+Finally, from our RShiny visualization, we learned that there is an inverse relationship between the average sea water temperature and hard coral cover over time. This relationship is also true for global air temperature - as local sea temperature and global air temperature increased, hard coral cover in the Great Barrier Reef decreased. This relationship was seen most dramatically in recent years, and was especially pronounced around 2010. 
+
+
+### Limitations
+
+There are also significant limitations to our analyses. Due to limited availability of datasets with variables of importance to reef health, our models did not adjust for potential confounders. Fish species diversity could have changed over time due to many other changes occurring during the same time period, including water pollution, commercial and private fishing activity, and other environmental effects not accounted for in our simplified models of average water temperature over time. Similarly, predicting the presence of specific seagrass species is likely dependent on other factors not accounted for in our models, including water quality and salinity, water depth, and water nutrient content. Lastly, the visualizations created in our RShiny app are oversimplifications of important global trends, designed to help the user better understand just one aspect of the impact of climate change.
+
+### Conclusions
+
+Overall, our data lead us to conclude that reef health is negatively impacted by increasing sea water and global temperature. We see this evidenced as a decline in fish species diversity and hard coral cover, and we are concerned that climate change will affect seagrass presence and diversity as well. Our findings reinforce the need to take a proactive stance against climate change to save our planet and the species that inhabit our land and sea.
+
 

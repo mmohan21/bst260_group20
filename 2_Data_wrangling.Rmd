@@ -5,6 +5,10 @@ date: "12/10/2020"
 output: html_document
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
 **_First we will import the raw data, clean them, and build a few summary variables that are of interest for our analyses. Then we will take monthly averages which will allow us to appropriately merge the data._**
 ```{r, message=FALSE}
 library(readr)
@@ -200,7 +204,7 @@ table(seagrass_data$num_species_present)
 nrow(seagrass_data)
 ```
 
-We see that only 3.2% of total survey sites recorded more than 1 species observed. For ease of building a classification model, we will remove these rows. We do not want a situation where our model "can't decide" in classifying our observations. Because we removed only about 3% of over 12,500 observations, we still preserve statistical power.
+We see that only 3.2% (414/12795) of total survey sites recorded more than 1 species observed. For ease of building a classification model, we will remove these rows. We do not want a situation where our model "can't decide" in classifying our observations. Because we removed only about 3% of over 12,500 observations, we still preserve statistical power.
 ```{r}
 seagrass_data <- seagrass_data %>% filter(num_species_present < 2)
 
@@ -363,7 +367,7 @@ fish_agg <- aggregate(num_fish ~ year + month, data = fish, FUN = mean)
 fish_agg$monthyear <- my(paste(fish_agg$month, fish_agg$year, sep = " "))
 ```
 
-##3## Seagrass surveys
+##### Seagrass surveys
 ```{r, message=FALSE, warning=FALSE}
 setwd("raw_data")
 seagrass <- read_csv("GBR_NESP-TWQ-3.2.1-5.4_JCU_Seagrass_1984-2018_Site-surveys.csv")

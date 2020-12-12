@@ -10,6 +10,8 @@ runtime: shiny
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
+We created an animation time-lapse RShiny app illustrating the changes in average water temperature at 9m depth collected at Moore Reef over time, along with the change in percentage of hard coral cover over time. As a reference, we included a stagnant line plot showing the change in global average temperature over time. We learned that there is an inverse relationship between the average temperature and hard coral cover. Throughout the years, as the water temperature of Moore Reef increased, hard coral cover decreased. This relationship is seen most dramatically in recent years, most notably around 2010. We can also see that the average global temperature change is increasing with each year. This information solidifies the need to take a proactive stance against climate change to save our planet and the species that inhabit our land and sea.
+
 ```{r eruptions, echo=FALSE}
 library(shiny)
 library(openxlsx)
